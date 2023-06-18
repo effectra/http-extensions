@@ -1,0 +1,23 @@
+{
+    "name": "effectra/http-extensions",
+    "description": "The Effectra HTTP Extensions package.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Effectra\\Http\\Extensions\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mohammed Taha",
+            "email": "info@mohammedtaha.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.0.2",
+        "effectra/http-message": "^2.0",
+        "psr/http-message": "^1.1"
+    }
+}
