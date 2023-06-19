@@ -24,7 +24,7 @@ class RequestExtension extends ServerRequest
 
 
     /**
-     * Creates a new Request  object from the global request.
+     * Creates a new Request object from the global request.
      *
      * @return ServerRequestInterface  The Server Request object.
      */
