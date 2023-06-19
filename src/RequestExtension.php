@@ -5,6 +5,7 @@ namespace Effectra\Http\Extensions;
 use Effectra\Http\Foundation\RequestFoundation;
 use Effectra\Http\Message\ServerRequest;
 use Effectra\Validation\Validator;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RequestExtension extends ServerRequest
 {
@@ -23,11 +24,11 @@ class RequestExtension extends ServerRequest
 
 
     /**
-     * Creates a new RequestExtension object from the global request.
+     * Creates a new Request  object from the global request.
      *
-     * @return RequestExtension The RequestExtension object.
+     * @return ServerRequestInterface  The Server Request object.
      */
-    public static function fromGlobal(): RequestExtension
+    public static function fromGlobal(): ServerRequestInterface 
     {
         return RequestFoundation::createFromGlobals();
     }
