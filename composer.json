@@ -14,10 +14,11 @@
             "email": "info@mohammedtaha.net"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": "^8.0.2",
-        "effectra/http-message": "^2.0",
+        "effectra/http-message": "1.0",
+        "effectra/http-foundation":"1.0",
         "psr/http-message": "^1.1 || ^2.0"
     }
 }
