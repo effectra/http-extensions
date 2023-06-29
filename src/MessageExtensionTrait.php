@@ -102,13 +102,7 @@ trait MessageExtensionTrait
     public function getTokenFromAuthorizationHeader(ServerRequestInterface $request): ?string
     {
         $authorizationHeader = $request->getHeaderLine('Authorization');
-        $parts = explode(' ', $authorizationHeader);
-
-        if (count($parts) === 2 && $parts[0] === 'Bearer') {
-            return $parts[1];
-        }
-
-        return null;
+        return $authorizationHeader;
     }
 
     /**
@@ -118,7 +112,7 @@ trait MessageExtensionTrait
      * @param string $token The token to set in the Authorization header.
      * @return ResponseInterface The response object with the updated Authorization header.
      */
-    public function withTokenInAuthorizationHeader(ResponseInterface $response, string $token): ResponseInterface
+    public function withBearerTokenHeader(ResponseInterface $response, string $token): ResponseInterface
     {
         $response = $response->withHeader('Authorization', 'Bearer ' . $token);
         return $response;
@@ -127,23 +121,50 @@ trait MessageExtensionTrait
     /**
      * Parses the JSON body of the request.
      *
-     * @param ServerRequestInterface $request The request object.
      * @return array|null The parsed JSON data, or null if the Content-Type is not 'application/json' or there was a parsing error.
-     * @throws \RuntimeException If there was a parsing error.
      */
-    public static function parseJsonFromBody(ServerRequestInterface $request): ?array
+    public function parseJsonFromBody(): ?array
     {
-        if ($request->getHeaderLine('Content-Type') === 'application/json') {
-            $body = $request->getBody()->getContents();
-            $data = json_decode($body, true);
+        $body = $this->getBody()->getContents();
+        $data = json_decode($body, true);
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                // JSON parsing error occurred
-                throw new \RuntimeException('Failed to parse JSON body');
-            }
-
-            return $data;
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
         }
-        return null;
+
+        return $data;
+    }
+
+    /**
+     * Get the allowed HTTP methods from the 'Allow' header in the PSR-7 request.
+     *
+     * @return array The array of allowed HTTP methods.
+     */
+    function getAllowedMethods(): array
+    {
+        $allowedMethods = [];
+
+        $header = $this->getHeader('Allow');
+        if (!empty($header)) {
+            $allowedMethods = array_map('trim', explode(',', $header[0]));
+        }
+
+        return $allowedMethods;
+    }
+
+    /**
+     * Retrieves the token from the Authorization header using the Bearer scheme.
+     *
+     * @return string|null The token from the Authorization header, or null if it is not set.
+     */
+    public function getTokenFromBearer(): ?string
+    {
+        $token = null;
+        $header = $this->getHeaderLine('Authentication');
+        if ($header) {
+            preg_match('/Bearer\s+(.*)$/i', $header, $matches);
+            $token= $matches[1] ?? null;
+        }
+        return $token;
     }
 }
