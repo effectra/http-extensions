@@ -46,7 +46,7 @@ class RequestExtension extends ServerRequest
      */
     public function path(): string
     {
-       return $this->getUri()->getPath();
+        return $this->getUri()->getPath();
     }
 
     /**
@@ -64,7 +64,7 @@ class RequestExtension extends ServerRequest
         $postParams = $this->getParsedBody();
 
         // Get input stream data
-        $inputData = $this->parseJsonFromBody() ?? []; 
+        $inputData = $this->parseJsonFromBody() ?? [];
 
         // Merge all params into a single array
         $params = array_merge($getParams, $postParams, $inputData);
@@ -113,5 +113,32 @@ class RequestExtension extends ServerRequest
         return $this->inputs();
     }
 
-    
+    /**
+     * Get the client's IP address taking into account trusted proxies.
+     *
+     * This function retrieves the client's IP address by considering trusted proxy servers
+     * that might be forwarding requests. It checks if the remote address is one of the trusted
+     * proxies and if the X-Forwarded-For header is present. If so, it returns the first non-empty
+     * IP address from the list of forwarded addresses. Otherwise, it returns the remote address.
+     *
+     * @param array $trustedProxies An array of trusted proxy IP addresses.
+     * @return string|null The client's IP address or null if not available.
+     */
+    public function getClientIp(array $trustedProxies): ?string
+    {
+        $serverParams = $this->getServerParams();
+        $remoteAddress = $serverParams['REMOTE_ADDR'] ?? null;
+
+        if (in_array($remoteAddress, $trustedProxies, true) && isset($serverParams['HTTP_X_FORWARDED_FOR'])) {
+            $forwardedFor = explode(',', $serverParams['HTTP_X_FORWARDED_FOR']);
+            foreach ($forwardedFor as $ip) {
+                $ip = trim($ip);
+                if ($ip !== '') {
+                    return $ip;
+                }
+            }
+        }
+
+        return $remoteAddress;
+    }
 }
