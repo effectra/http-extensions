@@ -4,7 +4,6 @@ namespace Effectra\Http\Extensions;
 
 use Effectra\Http\Message\Stream;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 trait MessageExtensionTrait
 {
@@ -18,23 +17,6 @@ trait MessageExtensionTrait
     public function write($body)
     {
         return $this->withBody($body);
-    }
-
-    /**
-     * Creates a redirect response.
-     *
-     * @param string $url The URL to redirect to.
-     * @param int $statusCode The HTTP status code for the redirect response. Default is 302 (Found).
-     * @return ResponseInterface
-     */
-    public function redirect(string $url, int $statusCode = 302): ResponseInterface
-    {
-        /** @var ResponseInterface $clone */
-        $clone = clone $this;
-
-        return $clone
-            ->withStatus($statusCode)
-            ->withHeader('location', $url);
     }
 
     /**
@@ -96,12 +78,11 @@ trait MessageExtensionTrait
     /**
      * Retrieves the token from the Authorization header of the request.
      *
-     * @param ServerRequestInterface $request The request object.
      * @return string|null The token from the Authorization header, or null if not present or invalid.
      */
-    public function getTokenFromAuthorizationHeader(ServerRequestInterface $request): ?string
+    public function getTokenFromAuthorizationHeader(): ?string
     {
-        $authorizationHeader = $request->getHeaderLine('Authorization');
+        $authorizationHeader = $this->getHeaderLine('Authorization');
         return $authorizationHeader;
     }
 
@@ -114,8 +95,7 @@ trait MessageExtensionTrait
      */
     public function withBearerTokenHeader(ResponseInterface $response, string $token): ResponseInterface
     {
-        $response = $response->withHeader('Authorization', 'Bearer ' . $token);
-        return $response;
+        return $response->withHeader('Authorization', 'Bearer ' . $token);
     }
 
     /**
@@ -160,7 +140,7 @@ trait MessageExtensionTrait
     public function getTokenFromBearer(): ?string
     {
         $token = null;
-        $header = $this->getHeaderLine('Authentication');
+        $header = $this->getHeaderLine('Authorization');
         if ($header) {
             preg_match('/Bearer\s+(.*)$/i', $header, $matches);
             $token= $matches[1] ?? null;
