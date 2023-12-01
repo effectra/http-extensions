@@ -109,6 +109,7 @@ class ResponseExtension extends Response
             ->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
             ->withHeader('Content-Length', (string) $fileStream->getSize());
     }
+
     /**
      * Reads a file and returns it as a response with the appropriate content type.
      *
