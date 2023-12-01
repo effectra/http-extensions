@@ -20,6 +20,26 @@ trait MessageExtensionTrait
     }
 
     /**
+     * return no content response .
+     *
+     * @return $this
+     */
+    public function noContent()
+    {
+        return $this->write('')->withStatus(204);
+    }
+
+    /**
+     * return Internal Error response .
+     *
+     * @return $this
+     */
+    public function serverError($message = 'Internal Error')
+    {
+        return $this->write($message)->withStatus(500);
+    }
+
+    /**
      * Adds a cookie to the response.
      *
      * @param string $name The name of the cookie.
@@ -89,13 +109,12 @@ trait MessageExtensionTrait
     /**
      * Sets the token in the Authorization header of the response.
      *
-     * @param ResponseInterface $response The response object.
      * @param string $token The token to set in the Authorization header.
      * @return ResponseInterface The response object with the updated Authorization header.
      */
-    public function withBearerTokenHeader(ResponseInterface $response, string $token): ResponseInterface
+    public function withBearerTokenHeader( string $token): ResponseInterface
     {
-        return $response->withHeader('Authorization', 'Bearer ' . $token);
+        return $this->withHeader('Authorization', 'Bearer ' . $token);
     }
 
     /**
@@ -143,7 +162,7 @@ trait MessageExtensionTrait
         $header = $this->getHeaderLine('Authorization');
         if ($header) {
             preg_match('/Bearer\s+(.*)$/i', $header, $matches);
-            $token= $matches[1] ?? null;
+            $token = $matches[1] ?? null;
         }
         return $token;
     }
