@@ -11,6 +11,23 @@ class ResponseExtension extends Response
 {
     use MessageExtensionTrait;
 
+     /**
+     * Creates a redirect response.
+     *
+     * @param string $url The URL to redirect to.
+     * @param int $statusCode The HTTP status code for the redirect response. Default is 302 (Found).
+     * @return ResponseInterface
+     */
+    public function redirect(string $url, int $statusCode = 302): ResponseInterface
+    {
+        /** @var ResponseInterface $clone */
+        $clone = clone $this;
+
+        return $clone
+            ->withStatus($statusCode)
+            ->withHeader('location', $url);
+    }
+
     /**
      * Creates a JSON response.
      *
@@ -206,4 +223,5 @@ class ResponseExtension extends Response
 
         return $clone->withAddedHeader('Set-Cookie', $cookieHeader);
     }
+
 }
