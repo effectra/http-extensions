@@ -50,12 +50,12 @@ class RequestExtension extends ServerRequest
     }
 
     /**
-     * Returns an object containing all input data, including query params,
+     * Returns an array containing all input data, including query params,
      * POST data, and input stream data.
      *
-     * @return object An object of input data.
+     * @return array An array of input data.
      */
-    public function inputs(): object
+    public function inputs(): array
     {
         // Get query params
         $getParams = $this->getQueryParams();
@@ -69,7 +69,18 @@ class RequestExtension extends ServerRequest
         // Merge all params into a single array
         $params = array_merge($getParams, $postParams, $inputData);
 
-        return (object) $params;
+        return $params;
+    }
+
+    /**
+     * Returns an object containing all input data, including query params,
+     * POST data, and input stream data.
+     *
+     * @return array An object of input data.
+     */
+    public function inputsAsObject()
+    {
+        return (object) $this->inputs();
     }
 
     /**
@@ -77,12 +88,12 @@ class RequestExtension extends ServerRequest
      *
      * @param string $input The name of the input parameter.
      *
-     * @return string|null The value of the input parameter, or null if it is not set.
+     * @return mixed The value of the input parameter, or default if it is not set.
      */
-    public function input(string $input): ?string
+    public function input(string $input,$default = null): mixed
     {
-        $inputs = (array) self::inputs();
-        return $inputs[$input] ?? null;
+        $inputs = $this->inputs();
+        return $inputs[$input] ?? $default;
     }
 
     /**
@@ -95,7 +106,7 @@ class RequestExtension extends ServerRequest
     public function onlyInputs(array $inputs): object
     {
         $reqInputs = $this->inputs();
-        return (object) array_intersect_key((array) $reqInputs, array_flip($inputs));
+        return (object) array_intersect_key($reqInputs, array_flip($inputs));
     }
 
     /**
@@ -105,7 +116,7 @@ class RequestExtension extends ServerRequest
      *
      * @return array|object The input data as an associative array or an object, based on the $associative parameter.
      */
-    public function data(bool $associative = false): array|object
+    public function data(bool $associative = true): array|object
     {
         if ($associative) {
             return (array) $this->inputs();
