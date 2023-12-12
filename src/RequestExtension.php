@@ -2,9 +2,10 @@
 
 namespace Effectra\Http\Extensions;
 
+use Effectra\Http\Extensions\Contracts\RequestExtensionInterface;
 use Effectra\Http\Message\ServerRequest;
 
-class RequestExtension extends ServerRequest
+class RequestExtension extends ServerRequest implements RequestExtensionInterface
 {
     use MessageExtensionTrait;
 
@@ -76,9 +77,9 @@ class RequestExtension extends ServerRequest
      * Returns an object containing all input data, including query params,
      * POST data, and input stream data.
      *
-     * @return array An object of input data.
+     * @return object An object of input data.
      */
-    public function inputsAsObject()
+    public function inputsAsObject():object
     {
         return (object) $this->inputs();
     }

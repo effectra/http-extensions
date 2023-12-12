@@ -52,7 +52,7 @@ trait MessageExtensionTrait
      *
      * @return self Returns a new instance of the response with the added cookie.
      */
-    public function withCookies($name, $value, $expires = 0, $path = '/', $domain = '', $secure = false, $httpOnly = true)
+    public function withCookie($name, $value, $expires = 0, $path = '/', $domain = '', $secure = false, $httpOnly = true)
     {
         $cookie = sprintf('%s=%s', $name, urlencode($value));
 
@@ -79,6 +79,27 @@ trait MessageExtensionTrait
         $clone = clone $this;
         $clone->withAddedHeader('Set-Cookie', $cookie);
         return $clone;
+    }
+
+    /**
+     * Sets a cookie with the given parameters.
+     *
+     * @param string $name The name and value of the cookies defined s array (key:name|value:value).
+     * @param string $value The  of the cookie.
+     * @param int $expires The expiration time of the cookie in Unix timestamp format. Default is 0 (session cookie).
+     * @param string $path The path on the server where the cookie will be available. Default is '/' (all paths).
+     * @param string $domain The domain that the cookie is available to. Default is an empty string (current domain).
+     * @param bool $secure Indicates if the cookie should only be transmitted over secure HTTPS connections. Default is false.
+     * @param bool $httpOnly Indicates if the cookie should only be accessible through HTTP(S) and not JavaScript. Default is true.
+     * @return ResponseInterface
+     */
+    public function withCookies(array $cookie, int $expires = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httpOnly = true): ResponseInterface
+    {
+        $response =  $this;
+        foreach ($cookie as $name => $value) {
+            $response = $response->withCookie($name, $value, $expires, $path, $domain, $secure, $httpOnly);
+        }
+        return $response;
     }
 
     /**
@@ -112,7 +133,7 @@ trait MessageExtensionTrait
      * @param string $token The token to set in the Authorization header.
      * @return ResponseInterface The response object with the updated Authorization header.
      */
-    public function withBearerTokenHeader( string $token): ResponseInterface
+    public function withBearerTokenHeader(string $token): ResponseInterface
     {
         return $this->withHeader('Authorization', 'Bearer ' . $token);
     }

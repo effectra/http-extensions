@@ -2,12 +2,13 @@
 
 namespace Effectra\Http\Extensions;
 
+use Effectra\Http\Extensions\Contracts\ResponseExtensionInterface;
 use Effectra\Http\Message\Response;
 use Effectra\Http\Message\Stream;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
 
-class ResponseExtension extends Response
+class ResponseExtension extends Response implements ResponseExtensionInterface
 {
     use MessageExtensionTrait;
 
@@ -164,65 +165,6 @@ class ResponseExtension extends Response
             ->withHeader('Content-Type', $contentType)
             ->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
             ->withHeader('Content-Length', (string) $fileStream->getSize());
-    }
-
-    /**
-     * Sets a cookie with the given parameters.
-     *
-     * @param string $name The name of the cookie.
-     * @param string $value The value of the cookie.
-     * @param int $expires The expiration time of the cookie in Unix timestamp format. Default is 0 (session cookie).
-     * @param string $path The path on the server where the cookie will be available. Default is '/' (all paths).
-     * @param string $domain The domain that the cookie is available to. Default is an empty string (current domain).
-     * @param bool $secure Indicates if the cookie should only be transmitted over secure HTTPS connections. Default is false.
-     * @param bool $httpOnly Indicates if the cookie should only be accessible through HTTP(S) and not JavaScript. Default is true.
-     * @return ResponseInterface
-     */
-    public function withCookie(string $name, string $value, int $expires = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httpOnly = true): ResponseInterface
-    {
-        return $this->withCookies([$name => $value], $expires, $path, $domain, $secure, $httpOnly);
-    }
-
-    /**
-     * Sets multiple cookies with the given parameters.
-     *
-     * @param array $cookies An associative array of cookies where the keys are the cookie names and the values are the cookie values.
-     * @param int $expires The expiration time of the cookies in Unix timestamp format. Default is 0 (session cookies).
-     * @param string $path The path on the server where the cookies will be available. Default is '/' (all paths).
-     * @param string $domain The domain that the cookies are available to. Default is an empty string (current domain).
-     * @param bool $secure Indicates if the cookies should only be transmitted over secure HTTPS connections. Default is false.
-     * @param bool $httpOnly Indicates if the cookies should only be accessible through HTTP(S) and not JavaScript. Default is true.
-     * @return ResponseInterface
-     */
-    public function withCookies(array $cookies, int $expires = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httpOnly = true): ResponseInterface
-    {
-        $cookieStrings = [];
-        foreach ($cookies as $name => $value) {
-            $cookieStrings[] = urlencode($name) . '=' . urlencode($value);
-        }
-
-        $cookieHeader = implode('; ', $cookieStrings);
-        if ($expires > 0) {
-            $expiresFormatted = gmdate('D, d M Y H:i:s T', $expires);
-            $cookieHeader .= "; expires={$expiresFormatted}";
-        }
-        if (!empty($path)) {
-            $cookieHeader .= "; path={$path}";
-        }
-        if (!empty($domain)) {
-            $cookieHeader .= "; domain={$domain}";
-        }
-        if ($secure) {
-            $cookieHeader .= '; secure';
-        }
-        if ($httpOnly) {
-            $cookieHeader .= '; HttpOnly';
-        }
-
-        /** @var ResponseInterface $clone */
-        $clone = clone $this;
-
-        return $clone->withAddedHeader('Set-Cookie', $cookieHeader);
     }
 
 }

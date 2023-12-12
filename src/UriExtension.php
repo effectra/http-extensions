@@ -3,8 +3,9 @@
 namespace Effectra\Http\Extensions;
 
 use Effectra\Http\Message\Uri;
+use Psr\Http\Message\UriInterface;
 
-class UriExtension extends Uri
+class UriExtensionInterface extends Uri  implements UriExtensionInterface
 {
     /**
      * Returns a new Uri object with the specified query parameters.
@@ -12,19 +13,20 @@ class UriExtension extends Uri
      * @param array $queries An array of query parameters.
      * @return Uri The new Uri object with the updated query parameters.
      */
-    public function withQueries(array $queries): Uri
+    public function withQueries(array $queries): UriInterface
     {
         $clone = clone $this;
         $clone->withQuery(http_build_query($queries));
         return $clone;
     }
 
-     /**
+    /**
      * Get the query parameters as an array from the URI.
      *
      * @return array The array of query parameters.
      */
     public function getQueryParams(): array
+
     {
         $query = $this->getQuery();
         parse_str($query, $queryParams);
@@ -37,7 +39,7 @@ class UriExtension extends Uri
      * @param string ...$segments The path segments to append.
      * @return Uri The new Uri object with the updated path segments.
      */
-    public function withPathSegments(string ...$segments): Uri
+    public function withPathSegments(string ...$segments): UriInterface
     {
         $path = $this->getPath();
 
