@@ -28,8 +28,23 @@ interface MessageExtensionInterface
      *
      * @return ResponseInterface
      */
-    public function serverError($message = 'Internal Error');
+    public function serverError($message = 'Internal Error'):ResponseInterface;
 
+    /**
+     * Adds a cookie to the response.
+     *
+     * @param string $name The name of the cookie.
+     * @param string $value The value of the cookie.
+     * @param int $expires The expiration time of the cookie in Unix timestamp format. Default is 0 (session cookie).
+     * @param string $path The path on the server where the cookie will be available. Default is '/' (all paths).
+     * @param string $domain The domain that the cookie is available to. Default is an empty string (current domain).
+     * @param bool $secure Indicates if the cookie should only be transmitted over secure HTTPS connections. Default is false.
+     * @param bool $httpOnly Indicates if the cookie should only be accessible through HTTP(S) and not JavaScript. Default is true.
+     *
+     * @return ResponseInterface Returns a new instance of the response with the added cookie.
+     */
+    public function withCookie($name, $value, $expires = 0, $path = '/', $domain = '', $secure = false, $httpOnly = true):ResponseInterface;
+    
     /**
      * Sets a cookie with the given parameters.
      *
@@ -43,21 +58,6 @@ interface MessageExtensionInterface
      * @return ResponseInterface
      */
     public function withCookies(array $cookie, int $expires = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httpOnly = true): ResponseInterface;
-    
-    /**
-     * Adds a cookie to the response.
-     *
-     * @param string $name The name of the cookie.
-     * @param string $value The value of the cookie.
-     * @param int $expires The expiration time of the cookie in Unix timestamp format. Default is 0 (session cookie).
-     * @param string $path The path on the server where the cookie will be available. Default is '/' (all paths).
-     * @param string $domain The domain that the cookie is available to. Default is an empty string (current domain).
-     * @param bool $secure Indicates if the cookie should only be transmitted over secure HTTPS connections. Default is false.
-     * @param bool $httpOnly Indicates if the cookie should only be accessible through HTTP(S) and not JavaScript. Default is true.
-     *
-     * @return self Returns a new instance of the response with the added cookie.
-     */
-    public function withCookie($name, $value, $expires = 0, $path = '/', $domain = '', $secure = false, $httpOnly = true);
    
     /**
      * Sets the response body as plain text.

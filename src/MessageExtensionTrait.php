@@ -8,13 +8,14 @@ use Psr\Http\Message\ResponseInterface;
 trait MessageExtensionTrait
 {
 
+    
     /**
      * Writes the response body.
      *
      * @param mixed $body The response body.
-     * @return $this
+     * @return ResponseInterface
      */
-    public function write($body)
+    public function write($body): ResponseInterface
     {
         return $this->withBody($body);
     }
@@ -22,9 +23,9 @@ trait MessageExtensionTrait
     /**
      * return no content response .
      *
-     * @return $this
+     * @return ResponseInterface
      */
-    public function noContent()
+    public function noContent(): ResponseInterface
     {
         return $this->write('')->withStatus(204);
     }
@@ -32,9 +33,9 @@ trait MessageExtensionTrait
     /**
      * return Internal Error response .
      *
-     * @return $this
+     * @return ResponseInterface
      */
-    public function serverError($message = 'Internal Error')
+    public function serverError($message = 'Internal Error'):ResponseInterface
     {
         return $this->write($message)->withStatus(500);
     }
@@ -50,9 +51,9 @@ trait MessageExtensionTrait
      * @param bool $secure Indicates if the cookie should only be transmitted over secure HTTPS connections. Default is false.
      * @param bool $httpOnly Indicates if the cookie should only be accessible through HTTP(S) and not JavaScript. Default is true.
      *
-     * @return self Returns a new instance of the response with the added cookie.
+     * @return ResponseInterface
      */
-    public function withCookie($name, $value, $expires = 0, $path = '/', $domain = '', $secure = false, $httpOnly = true)
+    public function withCookie($name, $value, $expires = 0, $path = '/', $domain = '', $secure = false, $httpOnly = true):ResponseInterface
     {
         $cookie = sprintf('%s=%s', $name, urlencode($value));
 
